@@ -26,7 +26,7 @@ window.onload = function() {
     var top = _event.clientY - objDemo.offsetTop - objSmall.offsetTop - objFloat.offsetHeight / 2;
         
     if (left < 0) {
-        left = 0;   // 左侧越界
+      left = 0;   // 左侧越界
     } else if (left > (objMark.offsetWidth - objFloat.offsetWidth)) {
       left = objMark.offsetWidth - objFloat.offsetWidth;  // 右侧越界
     }
