@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="calculator">
+    <div id="head">
+      <p>计算器</p>
+    </div>
+    <form name="calculator" action="" method="get">
+      <div id="cal-screen">
+        <input type="text" name="number" class="screen" value="0" onfocus="this.blur()">
+      </div>
+      <div id="cal-btn">
+        <ul>
+          <li onclick="command(7)">7</li>
+          <li onclick="command(8)">8</li>
+          <li onclick="command(9)">9</li>
+          <li class="tool" onclick="del()">←</li>
+          <li class="tool" onclick="clearScreen()">C</li>
+          <li onclick="command(4)">4</li>
+          <li onclick="command(5)">5</li>
+          <li onclick="command(6)">6</li>
+          <li class="tool" onclick="times()">×</li>
+          <li class="tool" onclick="divide()">÷</li>
+          <li onclick="command(1)">1</li>
+          <li onclick="command(2)">2</li>
+          <li onclick="command(3)">3</li>
+          <li class="tool" onclick="plus()">+</li>
+          <li class="tool" onclick="minus()">-</li>
+          <li onclick="command(0)">0</li>
+          <li onclick="doubleZero()">00</li>
+          <li onclick="dot()">.</li>
+          <li class="tool" onclick="persent()">%</li>
+          <li class="tool" onclick="equal()">=</li>
+        </ul>
+      </div>
+      <div id="foot">
+        <span id="note"></span>
+      </div>
+    </form>
+  </div>
+</body>
+<script src="main.js"></script>
+</html>
