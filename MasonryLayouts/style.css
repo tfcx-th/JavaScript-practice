@@ -1,0 +1,6 @@
+div {
+    background: #ccc;
+    width: 200px;
+    position: absolute;
+    transition: 0.5s;
+}
