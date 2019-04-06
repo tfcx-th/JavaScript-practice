@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,6 @@
         margin-bottom: 5px;
     }
     #chart {
-        /* display: inline-block; */
         width: 500px;
         height: 333px;
         float: left;
@@ -26,6 +26,7 @@
     }
     #chart-wrapper {
         position: relative;
+        margin-left: 20px;
     }
     #marker {
         position: absolute;
@@ -34,12 +35,10 @@
         width: 1px;
         border-left: 1px solid black;
     }
-    #export-chart, #legends {
-      float: left;
+    #area-chart, #legends {
+        float: left;
     }
-    #export-chart {
-      margin-left: 10px;
-    }
+  
   </style>
 </head>
 <body>
@@ -52,9 +51,8 @@
     </div>
     <div id="chart-wrapper">
       <div id="marker"></div>
-      <div id="export-chart"></div>
-      <div id="legends" style="float:left;"></div>
-      <div style="clear:both;"></div>
+      <div id="area-chart"></div>
+      <div id="legends"></div>
     </div>
   </div>
 </body>
@@ -82,17 +80,14 @@
 
     var plotObj;
 
-    var data = $.map(
-      $.grep(source, function(obj) {
+    var data = $.map($.grep(source, function(obj) {
         return obj.show;
       }), function(obj) {
         return {
           data: obj.data,
           color: obj.color,
-          label: obj.label
         };
-      }
-    );
+    });
 
     $.each(source, function(idx, region) {
       var input = $('<input>').attr('type', 'checkbox').attr('id', 'chk-' + idx);
@@ -128,38 +123,36 @@
     });
 
     var options = {
-      legend: { position: 'nw' },
       selection: { mode: 'xy' }
     };
+
+    plotObj = $.plot($('#chart'), data, options);
 
     $('#chart').on('plotselected', function(ev, ranges) {
       plotObj = $.plot($('#chart'), data, $.extend(true, {}, options, {
         xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
         yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
       }));
-    })
-
-    plotObj = $.plot($('#chart'), data, options);
+    });
 
     $('#unzoom').click(function() {
       plotObj = $.plot($('#chart'), data, options);
     });
 
-    var export_data = $.map(source, function(obj) {
+    var area_data = $.map(source, function(obj) {
         return {
           label: obj.label,
           data: obj.data
         };
     });
-    console.log(export_data);
 
-    $.each(export_data, function(idx, region) {
+    $.each(area_data, function(idx, region) {
       var div = $('<div>').css({
         width: '600px',
         height: '50px'
       });
       region.div = div;
-      $('#export-chart').append(div);
+      $('#area-chart').append(div);
 
       $.plot(div, [region.data], {
         series: {
@@ -167,32 +160,32 @@
           shadowSize: 0
         },
         xaxis: { show: true, labelHeight: 0, min: 1960, max: 2011, 
-                 tickFormatter: function() { return '';} },
+                 tickFormatter: function() { return ''; } },
         yaxis: { show: false, min: 0, max: 60 },
         grid: { show: true, margin: 0, borderWidth: 0,
                 borderColor: null, margin: 0, labelMargin: 0,
                 axisMargin: 0, minBorderMargin: 0, hoverable: true, autoHighlight: false }
       });
 
-      var legend = $("<p>").text(region.label).css({
-        'height': "17px",
-        'margin-bottom': "0",
-        'margin-left': "10px",
-        'margin-top':  "0",
-        'padding-top': "33px"
+      var legend = $('<p>').text(region.label).css({
+        'height': '17px',
+        'margin-bottom': '0',
+        'margin-left': '10px',
+        'margin-top':  '0',
+        'padding-top': '33px'
       });
       $("#legends").append(legend);
 
       var value = $("<div>").css({
-        'position':  "absolute",
-        'top':       (div.position().top - 3) + "px",
-        'display':   "none",
+        'position':  'absolute',
+        'top':       (div.position().top + 30) + 'px',
+        'display':   'none',
         'z-index':   1,
-        'font-size': "11px",
-        'color':     "black" // "#fc7d00"
+        'font-size': '11px',
+        'color':     'black'
       });
       region.value = value;
-      $("#chart-wrapper").append(value);
+      $('#chart-wrapper').append(value);
     });
 
     var xaxis_label = [];
@@ -204,7 +197,8 @@
       width: '600px',
       height: '15px'
     });
-    $('#export-chart').append(div);
+
+    $('#area-chart').append(div);
 
     var xaxisPlot = $.plot(div, [xaxis_label], {
       xaxis: { show: true, labelHeight: 12, min: 1960, max: 2011 },
@@ -213,10 +207,10 @@
               labelMargin: 0, axisMargin: 0, minBorderMargin: 0, }
     });
 
-    $('#export-chart').on('plothover', function(ev, pos) {
+    $('#area-chart').on('plothover', function(ev, pos) {
       var year = Math.round(pos.x);
       var left = xaxisPlot.pointOffset(pos).left;
-      var height = $('#export-chart').height();
+      var height = $('#area-chart').height();
 
       $('#marker').css({
         'top': 0,
@@ -225,27 +219,28 @@
         'height': height
       }).show();
 
-      $.each(export_data, function(idx, region) {
+      $.each(area_data, function(idx, region) {
         matched = $.grep(region.data, function(pt) { return pt[0] === year; });
         if (matched.length > 0) {
-            region.value.text(year + ": " + matched[0][1].toFixed(2) + "%");
+            region.value.text(year + ': ' + matched[0][1].toFixed(2) + '%');
         } else {
-            region.value.text("");
+            region.value.text('');
         }
-        region.value.css("left", (left+4)+"px").show();
+        region.value.css('left', (left + 4) + 'px').show();
       });
     }).on('mouseout', function(ev) {
       if (ev.relatedTarget.id !== 'marker') {
         $('#marker').hide();
-        $.each(export_data, function(idx, region) {
+        $.each(area_data, function(idx, region) {
           region.value.hide();
         })
       }
     });
 
-    $("#marker").on("mouseout", function(ev) {
-      $("#marker").hide();
-      $.each(exports, function(idx, region) {
+    // 若将鼠标沿着marker移出图表，将marker隐藏
+    $('#marker').on('mouseout', function(ev) {
+      $('#marker').hide();
+      $.each(area_data, function(idx, region) {
           region.value.hide();
       });
     });
