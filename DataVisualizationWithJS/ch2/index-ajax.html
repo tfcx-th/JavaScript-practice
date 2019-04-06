@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+<body>
+  <div id="chart" style="width:600px;height:400px;"></div>
+</body>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/flot/0.7/jquery.flot.min.js"></script>
+<script src="jquery.flot.selection.js"></script>
+<script>
+  // 请求地区列表，将请求状态存在Deferred对象中
+  var deferredRegionsRequest = $.getJSON(
+    'http://api.worldbank.org/regions/?prefix=?',
+    { format: 'jsonp' }
+  );
+
+  // 创建另一个Deferred对象来追踪响应的进程
+  var deferredRegionsAvailable = $.Deferred();
+
+  // 处理最初请求的响应
+  deferredRegionsRequest.done(function(response) {
+
+    // 接收到进程完成信号时处理第二个Deferred对象
+    deferredRegionsAvailable.resolve(
+      // 只需要code和name属性
+      $.map(
+        // response[0]是翻页信息
+        // 过滤id为null的地区
+        $.grep(response[1], function(regionObj) {
+          return (regionObj.id !== '');
+        }), function(regionObj) {
+          return {
+            code: regionObj.code,
+            name: regionObj.name.replace(' (all income levels)', '')
+          };
+      })
+    );
+  });
+
+  var deferredAllDataAvailable = $.Deferred();
+
+  // 获取地区数据
+  deferredRegionsAvailable.done(function(regions) {
+    $.each(regions, function(idx, regionObj) {
+      regionObj.deferredRegionsRequest = $.getJSON(
+        'http://api.worldbank.org/countries/' + regionObj.code + '/indicators/NY.GDP.MKTP.CD' + '?prefix=?',
+        { format: 'jsonp', per_page: 9999 }
+      );
+      regionObj.deferredRegionsAvailable = $.Deferred();
+      regionObj.deferredRegionsRequest.done(function(response) {
+        regionObj.rawData = response[1] || [];
+        regionObj.deferredRegionsAvailable.resolve();
+      });
+    });
+    $.when.apply(this, $.map(regions, function(regionObj) {
+      return regionObj.deferredRegionsAvailable;
+    })).done(function () {
+      deferredAllDataAvailable.resolve(regions);
+    });
+  });
+
+  var deferredChartDataReady = $.Deferred();
+
+  deferredAllDataAvailable.done(function(regions) {
+    $.each(regions, function(idx, regionObj) {
+      regionObj.flotData = $.map(
+        $.grep(regionObj.rawData, function(dataObj) {
+          return (dataObj.value !== null);
+        }), function(dataObj) {
+          return [
+            [
+              parseInt(dataObj.date),
+              parseFloat(dataObj.value) / 1e12
+          ]];
+      });
+    });
+    deferredChartDataReady.resolve(regions);
+  });
+  
+  deferredChartDataReady.done(function(regions) {
+    $.plot($('#chart'),
+      $.map(regions, function(regionObj) {
+        return {
+          label: regionObj.name,
+          data: regionObj.flotData
+        };
+      }), {
+        legend: { position: 'nw' }
+    });
+  })
+</script>
+</html>
