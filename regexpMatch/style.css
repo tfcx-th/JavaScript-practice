@@ -1,0 +1,60 @@
+html {
+    box-sizing: border-box;
+    margin: 0px;
+    background-color: orange;
+    font-family: "华文楷体";
+    font-size: 625%;
+    font-weight: 200px;
+}
+body {
+    display: flex;
+    justify-content: center;
+}
+.search-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.search {
+    width:8rem;
+    border:0.1rem solid #f7f7f7;
+    padding:0.2rem;
+    border-radius: 0.05rem;
+    font-size:0.2rem;
+    text-align:center;
+    box-shadow:0 0 5px 0 rgba(0,0,0,0.12),
+               0 0 3px 0 rgba(0,0,0,.19) inset;
+    margin-top:0.4rem;
+    outline:none;
+}
+.suggestions {
+    list-style: none; /*去掉序列修饰符号*/
+    width:6rem;
+    margin:0px;
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size:0.2rem;
+}
+.suggestions li {
+    text-align: center;
+    width:100%;
+    background: white;
+    border-bottom: 0.01rem solid #D8D8D8;
+    padding:0.15rem;
+    box-shadow:0 0 10px rgba(0,0,0,0.14);
+}
+.suggestions li:hover {
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.4);
+}
+.suggestions p {
+    text-align:right;
+    margin:0;
+}
+.suggestions li:nth-child(odd){
+    transform: perspective(1rem) rotateX(-3deg) ;
+}
+.suggestions li:nth-child(even){
+    transform: perspective(1rem) rotateX(3deg) translateY(-2px) ;
+}
