@@ -1,19 +1,22 @@
 (function() {
 
-  var addItems = document.querySelector('.add-items');
+  let addItems = document.querySelector('.add-items');
+  
   // ToDoList列表 
-  var itemsList = document.querySelector('.plates');
-  var buttons = document.querySelector('.buttons');
+  let itemsList = document.querySelector('.plates');
+  
+  let buttons = document.querySelector('.buttons');
+  
   // 获取本地缓存到的所有item，将一个对象字符串转换为对象
-  var items = [];
+  let items = [];
 
   // 添加item
   function handleSubmit(e) {
     // 阻止默认事件的触发，防止在提交后页面自己刷新
     e.preventDefault();
     
-    var name = this.querySelector('[name = item]').value;
-    var item = {
+    let name = this.querySelector('[name = item]').value;
+    let item = {
       name: name,
       done: false
     };
@@ -23,20 +26,23 @@
     this.reset();
   }
 
+  // 更新ToDo列表
   function updateList(plates, plateList) {
-    plateList.innerHTML = plates.map(function(plate, i) {
-      return '<li><input type="checkbox" data-index="' + i + '" id="plate' + i + 
-        '" ' + (plate.done ? 'checked' : '') + '/><label for="plate' + i + '">' 
-        + plate.name + '</label></li>';
+    plateList.innerHTML = plates.map((plate, i) => {
+      let checked = plate.done ? 'checked' : '';
+      return `<li>
+                <input type="checkbox" data-index="${ i }" id="plate${ i }" ${ checked }/>
+                <label for="plate${ i }">${ plate.name }</label>
+              </li>`;
     }).join('');
   }
 
+  // 选中单项
   function toggleChecked(e) {
-    if (!e.target.matches('input'))
-      return;
-    var item = e.target.dataset.index;
-    items[item].done = !items[item].done;
-    localStorage,setItem('items', JSON.stringify(items));
+    if (!e.target.matches('input')) return;
+    let itemIndex = e.target.dataset.index;
+    items[itemIndex].done = !items[itemIndex].done;
+    localStorage.setItem('items', JSON.stringify(items));
     updateList(items, itemsList);
   }
 
@@ -48,14 +54,10 @@
         items = [];
         break;
       case 'check':
-        items.map(function(item) {
-          return item.done = true;
-        });
+        items.map(item => (item.done = true));
         break;
       case 'uncheck':
-        items.map(function(item) {
-          return item.done = false;
-        });
+        items.map(item => (item.done = false));
         break;
       default:
         return;
