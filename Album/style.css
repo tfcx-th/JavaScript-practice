@@ -1,0 +1,44 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+#wrap {
+    margin: 0 auto;
+    width: 1000px;
+    height: 650px;
+}
+.images li {
+    float: left;
+    margin: 10px 20px;
+    list-style: none;
+    font-size: 0;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px #333;
+}
+.black {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left: 0;
+    background: rgba(000,000,000,0.7);
+}
+.big {
+    display: none;
+    position: absolute;  
+    width: 650px;
+    height: 406px;
+    border: 10px solid #fff;
+}
+.left, .right {
+    position: absolute;
+    top: 180px;
+    cursor: pointer;
+}
+.left {
+    left: -60px;
+}
+.right {
+    right: -60px;
+}
